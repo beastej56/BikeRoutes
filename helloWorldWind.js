@@ -1,13 +1,22 @@
 
+
+var defaultLat  ;
+var defaultLong;
+var defaultEye  ;
+
+var geocoder;
+var goToAnimator ;
+
+function drawMap () {
 // Create a WorldWindow for the canvas.
-var wwd = new WorldWind.WorldWindow("canvasOne");
+wwd = new WorldWind.WorldWindow("canvasOne");
 
-var defaultLat = wwd.navigator.lookAtLocation.latitude ;
-var defaultLong = wwd.navigator.lookAtLocation.longitude;
-var defaultEye = wwd.navigator.range ;
+this.defaultLat = wwd.navigator.lookAtLocation.latitude ;
+this.defaultLong = wwd.navigator.lookAtLocation.longitude;
+this.defaultEye = wwd.navigator.range ;
 
-var geocoder = new WorldWind.NominatimGeocoder();
-var goToAnimator = new WorldWind.GoToAnimator(this.wwd);
+this.geocoder = new WorldWind.NominatimGeocoder();
+this.goToAnimator = new WorldWind.GoToAnimator(this.wwd);
 
 //wwd.addLayer(new WorldWind.OpenStreetMapImageLayer());
 wwd.addLayer(new WorldWind.BMNGLandsatLayer());
@@ -19,17 +28,17 @@ wwd.addLayer(new WorldWind.ViewControlsLayer(wwd));
 
 
 // Add WMS imagery
-var serviceAddress = "https://neo.sci.gsfc.nasa.gov/wms/wms?SERVICE=WMS&REQUEST=GetCapabilities&VERSION=1.3.0";
+//var serviceAddress = "https://neo.sci.gsfc.nasa.gov/wms/wms?SERVICE=WMS&REQUEST=GetCapabilities&VERSION=1.3.0";
 var serviceAddress = "https://tigerweb.geo.census.gov/arcgis/services/TIGERweb/tigerWMS_Current/MapServer/WMSServer?request=GetCapabilities&service=WMS"
 var layerName = "SEDAC_POP";
 layerName ="States"
 
 var createLayer = function (xmlDom) {
-    //var wms = new WorldWind.WmsCapabilities(xmlDom);
-    //var wmsLayerCapabilities = wms.getNamedLayer(layerName);
-    //var wmsConfig = WorldWind.WmsLayer.formLayerConfiguration(wmsLayerCapabilities);
-   // var wmsLayer = new WorldWind.WmsLayer(wmsConfig);
-   //wwd.addLayer(wmsLayer);
+    var wms = new WorldWind.WmsCapabilities(xmlDom);
+    var wmsLayerCapabilities = wms.getNamedLayer(layerName);
+    var wmsConfig = WorldWind.WmsLayer.formLayerConfiguration(wmsLayerCapabilities);
+   var wmsLayer = new WorldWind.WmsLayer(wmsConfig);
+   wwd.addLayer(wmsLayer);
 
    //var wms = new WorldWind.WmsCapabilities(xmlDom);
    //var wmsLayerCapabilities = wms.getNamedLayer("Counties");
@@ -172,6 +181,9 @@ var logError = function (jqXhr, text, exception) {
 };
 
 $.get(serviceAddress).done(createLayer).fail(logError);
+
+};
+
 
 function handleClick(radioButton) {
     //var goToAnimator = new WorldWind.GoToAnimator(this.wwd);
